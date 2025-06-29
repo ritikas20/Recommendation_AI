@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Recommender with Gemini</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(60, 72, 88, 0.12);
+            padding: 32px 36px 28px 36px;
+        }
+
+        h1 {
+            color: #3b3b5c;
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+        h2 {
+            color: #4f46e5;
+            margin-top: 0;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+        h3 {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        input[type="file"], input[type="text"] {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #f1f5f9;
+            transition: border 0.2s;
+        }
+        input[type="file"]:focus, input[type="text"]:focus {
+            border: 1.5px solid #6366f1;
+            outline: none;
+        }
+        button {
+            background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 0;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        #upload-message {
+            text-align: center;
+            margin: 10px 0 18px 0;
+            color: #059669;
+            font-weight: 500;
+            min-height: 24px;
+        }
+        #question-section {
+            margin-top: 18px;
+            animation: fadeIn 0.7s;
+        }
+        pre#response {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 16px;
+            color: #334155;
+            font-size: 1rem;
+            min-height: 40px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            box-shadow: 0 2px 8px rgba(100, 116, 139, 0.07);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 18px 8px 18px 8px;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Product Recommender with Gemini</h1>
+
+        <h2>Step 1: Upload CSV File</h2>
+        <form id="upload-form">
+            <input type="file" name="file" id="csv-file" required>
+            <button type="submit">Upload CSV</button>
+        </form>
+
+        <h3 id="upload-message"></h3>
+
+        <div id="question-section" style="display: none;">
+            <h2>Step 2: Ask Product Recommendation Question</h2>
+            <form id="query-form">
+                <input type="text" name="question" placeholder="Enter your question" required>
+                <button type="submit">Ask</button>
+            </form>
+
+            <h3>Response:</h3>
+            <pre id="response"></pre>
+        </div>
+    </div>
+    <script>
+        // Upload CSV
+        document.getElementById('upload-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('csv-file');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            document.getElementById('upload-message').innerText = data.message || data.error;
+
+            // If upload success — show the Question section
+            if (data.message) {
+                document.getElementById('question-section').style.display = 'block';
+            }
+        });
+
+        // Send Question
+        document.getElementById('query-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const questionInput = e.target.question.value;
+
+            const response = await fetch('/query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: questionInput })
+            });
+
+            const data = await response.json();
+            document.getElementById('response').innerText = data.response || data.error;
+        });
+    </script>
+</body>
+</html>
