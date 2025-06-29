@@ -32,12 +32,6 @@ An AI-powered product recommendation system that converts natural language queri
 
 ---
 
-## 📁 Folder Structure
 
-├── templates/
-│ └── index.html
-├── .env # API keys (ignored by Git)
-├── .gitignore
-├── app.py # Flask server & Gemini integration
-├── README.md
-├── requirement.txt
+
+
