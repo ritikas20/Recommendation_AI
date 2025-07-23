@@ -2,6 +2,7 @@ from flask import Flask
 from routes import register_routes
 from config import configure_app
 
+#Flask application setup
 app = Flask(__name__)
 configure_app(app)
 register_routes(app)

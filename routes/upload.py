@@ -6,6 +6,7 @@ from model import init_model
 
 upload_bp = Blueprint('upload', __name__)
 
+#Upload route to handle CSV file uploads
 @upload_bp.route('/upload', methods=['POST'])
 def upload():
     uploaded_file = request.files.get('file')

@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlite3
 
-connection = None  # global DB connection
+connection = None  
 
 def init_db(df):
     global connection
